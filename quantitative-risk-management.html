@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#33306B">
+<title>Risk Management vs. Risk Analysis &middot; Murray Cantor</title>
+<meta name="description" content="Quantitative against qualitative risk management, and why the analysis is worth nothing until it is joined to a management practice. An article by Murray Cantor.">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="wrap">
+
+<nav class="sitenav" aria-label="Site">
+  <a href="index.html">Home</a>
+  <a href="book.html">The book</a>
+  <a href="riskyproject.html">RiskyProject</a>
+  <a href="writing.html">Writing</a>
+  <a href="about.html">About</a>
+</nav>
+
+<header class="masthead">
+  <h1>Risk Management vs. Risk Analysis</h1>
+  <p class="standfirst">Why the Best Practice Is Quantitative Risk Management</p>
+  <p class="byline">Murray Cantor PhD</p>
+  <p class="meta">Applied probability &middot; April 2026</p>
+</header>
+
+<main>
+
+<section>
+  <h2>Background</h2>
+  <p>For decades, risk management and risk analysis developed as related yet distinct disciplines. Risk management grew primarily as a managerial practice focused on identifying risks, assigning owners, planning mitigations, and tracking actions. Standards such as ISO 31000 and PMI&rsquo;s risk management publications (PMI 2019, 2023) reflect that tradition: they emphasize principles, governance, process, treatment, monitoring, and communication.</p>
+
+  <p>Risk analysis developed from a different lineage, drawing more from engineering, probability, statistics, decision theory, finance, and operations research. Its purpose was not merely to name risks but to characterize uncertainty, estimate consequences, and support decisions quantitatively. A classic statement of that tradition is Kaplan and Garrick&rsquo;s paper (Kaplan and Garrick, 1981), which framed risk in terms of scenarios, likelihoods, and consequences and explicitly connected quantitative risk treatment with uncertainty. Also see Mun (2003).</p>
+
+  <p>Risk management, in its common organizational form, tended to be action-oriented and qualitative. It favored risk registers, probability-impact matrices, review meetings, and mitigation plans, which made it accessible and easy to institutionalize. Executives and project managers could see a process, assign accountability, and demonstrate governance. ISO 31000, for example, presents risk management as a structured organizational process that includes identifying, analyzing, evaluating, treating, monitoring, and communicating risk. PMI&rsquo;s standard similarly focuses on the principles, fundamentals, and life cycle of risk management across portfolios, programs, and projects.</p>
+
+  <p>Risk analysis, by contrast, tended to be model-based and quantitative. It focused on uncertainty in the underlying drivers of outcomes: cost, duration, technical performance, reliability, safety, demand, and other variables. Rather than classifying a risk as &lsquo;high&rsquo; or &lsquo;medium,&rsquo; it asked how uncertain the relevant parameters were, how those uncertainties interacted, and what range of outcomes they implied. NASA&rsquo;s probabilistic risk assessment guidance is a clear example of this approach. It describes PRA as a comprehensive, structured, and logical method for identifying and assessing risks in complex technological systems to improve safety and performance cost-effectively.</p>
+
+</section>
+<section>
+  <h2>Strengths and Weaknesses</h2>
+  <p>Traditional risk management often focused on discrete risk events: a supplier slips, a requirement changes, a component fails, a defect escapes, or a cyber incident occurs. Risk analysis often focused on uncertainty more broadly: schedule variability, cost growth rates, defect discovery rates, productivity, integration friction, market response, and correlated sources of uncertainty. One side asked, &lsquo;What bad events should we manage?&rsquo; The other asked, &lsquo;How does uncertainty propagate through the system, and what does that imply for outcomes?&rsquo;</p>
+
+  <p>Each side had a legitimate strength, and each had a serious weakness.</p>
+
+  <p>The strength of traditional risk management was that it drove action. It made risk visible in management forums. It created ownership. It supported escalation and mitigation planning. But by itself, it was often too shallow. Qualitative heat maps and ordinal rankings rarely show the true scale of exposure. They do not aggregate uncertainty well. They usually ignore correlation. They are weak at comparing mitigation options economically. And they often create an illusion of precision where none exists. These are well covered in (Hubbard 2009).</p>
+
+  <p>The strength of risk analysis was that it quantified uncertainty and revealed the range of possible outcomes. It supported forecasting, sensitivity analysis, simulation, reserve setting, and more rational trade studies. But analysis on its own could become detached from management. A technically elegant model has little value if it does not change decisions, priorities, resource allocations, design choices, or contingency plans. That is why the best approach is to combine them.</p>
+
+  <p>Risk analysis provides a quantitative understanding of uncertainty. Risk management provides the governance and decision framework through which that understanding leads to action. When the two are integrated, the result is quantitative risk management.</p>
+
+</section>
+<section>
+  <h2>Quantitative Risk Management</h2>
+  <p>Quantitative risk management treats risk analysis not as a separate technical specialty but as the analytic foundation of management. The organization still identifies risks, assigns owners, and plans mitigations. But those actions are informed by quantitative analysis of uncertainty. Risk events can be modeled explicitly when useful. Uncertain parameters can be represented as distributions. Dependencies can be captured rather than ignored. Simulation and related methods can then estimate the resulting distributions of the outcomes that matter: total cost, completion date, technical performance, safety margin, service level, or return on investment.</p>
+
+  <p>This changes the quality of decision-making. Management is no longer choosing responses based solely on red-yellow-green labels or rough ordinal scores. Instead, decisions can be based on how a mitigation changes the probability of failure, reduces downside exposure, narrows the uncertainty band, or improves expected value. That is a much stronger basis for prioritization and resource allocation.</p>
+
+  <p>It also resolves a conceptual mistake that has affected many organizations. Too often, risk management has been treated as the management of named risk events, while uncertainty in routine estimating assumptions was handled elsewhere or ignored. In practice, many important failures do not stem from dramatic one-off events. They stem from accumulated uncertainty in work content, productivity, integration, demand, quality, learning, and external conditions. Risk analysis captures those effects. Risk management ensures they are addressed. Together, they support real control over outcomes.</p>
+
+  <p>A step toward integration is to address conflicting terminology. For example, the risk management definition of &lsquo;risk&rsquo; is &ldquo;An uncertain event or condition that, if it occurs, has a positive or negative effect on one or more project objectives&rdquo; (PMI 2019). The risk analysis definition is &ldquo;The probability of failing to achieve a desired, but uncertain goal&rdquo; (Mun 2003). This definition is more consistent with probability theory.</p>
+
+  <p>A way to achieve integration is to rename the risk management term, a &lsquo;risk event,&rsquo; which has a probability of occurring and a probability of some impact on project parameters such as time or cost if it occurs. This event can be used in risk analysis by treating the uncertain goal probability as conditional on the risk event. This preserves mathematical rigor while enabling the risk management conversation.</p>
+
+  <p>This integrated view is especially important in projects, engineering, and product development. In those settings, risk management should not be a static review of a register. It should be a continuous process of learning and adaptation. As new evidence arrives, including actual progress, burn rates, defect trends, test results, and market feedback, estimates of future outcomes should be updated using Bayesian techniques. That is where quantitative risk management becomes far more powerful than either traditional qualitative risk management or isolated technical analysis.</p>
+
+  <p>The historical conflict between risk management and risk analysis was understandable. One discipline evolved to support organizational action, while the other evolved to support quantitative understanding. But the separation is now more of a liability than a strength. Risk management without risk analysis is often superficial, and risk analysis without risk management is often inert. The stronger approach is to combine them into a unified discipline: quantitative risk management, with risk analysis as the basis for management decisions.</p>
+
+</section>
+<section>
+  <h2>References</h2>
+  <p>Hubbard, Douglas. 2009. The Failure of Risk Management: Why It&rsquo;s Broken and How to Fix It. John Wiley &amp; Sons.</p>
+
+  <p>Kaplan, S., and B. J. Garrick,. 1981. &ldquo;On The Quantitative Definition of Risk.&rdquo; Risk Analysis 1 (1): 11&ndash;27.</p>
+
+  <p>Mun, J. 2003. Applied Risk Analysis. John Wiley &amp; Sons.</p>
+
+  <p>PMI. 2019. The Standard for Risk Management in Portfolios, Programs, and Projects. PMI.</p>
+
+  <p>PMI. 2023. A Guide to the Project Management Body of Knowledge. PMI.</p>
+
+</section>
+
+<section>
+  <p class="note">First published on murraycantor.com, April 2026. Listed with the other articles on the <a href="writing.html#quantitative-risk-management">writing page</a>.</p>
+</section>
+
+</main>
+
+<footer>
+  <p>Murray Cantor is a PhD mathematician and a retired IBM Distinguished Engineer whose career has consisted of applying mathematical thinking across a wide range of fields.</p>
+  <p><a href="writing.html">Writing</a> &middot; &copy; 2026 Cantor Consulting LLC</p>
+</footer>
+
+</div>
+</body>
+</html>

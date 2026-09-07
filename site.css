@@ -1,0 +1,286 @@
+/* ============================================================================
+   site.css — murraycantor.com
+
+   Every page in this folder links this one file and nothing else. Change a
+   colour, a font or a rule here and index.html, book.html, riskyproject.html,
+   writing.html, about.html and 404.html all follow.
+
+   PALETTE
+   This site is a sibling of healthy-skepticism.com, not a copy of it. The
+   structure, the type inversion and the neutrals are the same. The accent
+   pairing is different: healthy-skepticism.com is navy #1F3A5F with teal
+   #2E7D7B; this site is
+
+       --indigo  #33306B   primary: headings, links, the two heavy rules
+       --garnet  #8E3B52   accent: eyebrows, left borders, the mark
+
+   Indigo is darker and cooler than the navy and reads as a mathematics
+   colour without turning corporate. Garnet is warm enough to sit on the
+   #FBF9F5 paper without vibrating against it, and is far enough from the
+   amber focus ring (#E08A3C) that the two never read as the same signal.
+
+   Neutrals are carried over unchanged: --ink #22252A, --paper #FBF9F5,
+   --rule #DBD5CA, --muted #6B6F76.
+
+   No web fonts, no CDN, no JavaScript. The only image is Murray's
+   portrait, held locally in images/ and used on two pages. The masthead mark is
+   inline SVG in each page. Every path in the site is relative, so the pages
+   open correctly from disk as well as from a server.
+   ============================================================================ */
+
+/* ---------- tokens ---------- */
+:root{
+  --indigo:#33306B;
+  --garnet:#8E3B52;
+  --garnet-pale:#C58FA0;
+  --amber:#E08A3C;
+  --moss:#5A7247;
+  --ink:#22252A;
+  --paper:#FBF9F5;
+  --rule:#DBD5CA;
+  --muted:#6B6F76;
+  --serif:"Bookman Old Style","Bookman","Georgia",serif;
+  --sans:"Calibri","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+}
+
+/* ---------- base ---------- */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:19px;line-height:1.55;
+}
+
+.wrap{max-width:50rem;margin:0 auto;padding:2rem 1.5rem 5rem}
+
+/* ---------- nav ---------- */
+.sitenav{
+  display:flex;flex-wrap:wrap;gap:1.4rem;
+  font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+  padding-bottom:1.5rem
+}
+.sitenav a{color:var(--muted);text-decoration:none;padding-bottom:.15rem}
+.sitenav a:hover{color:var(--indigo)}
+.sitenav a[aria-current="page"]{color:var(--indigo);border-bottom:2px solid var(--garnet)}
+.sitenav a:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+
+/* ---------- masthead ---------- */
+.masthead{position:relative;border-bottom:2px solid var(--indigo);padding-bottom:1.75rem;margin-bottom:2.5rem}
+.mark-corner{position:absolute;top:0;right:0;width:64px;height:64px;color:var(--garnet)}
+
+.eyebrow{
+  font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--garnet);font-weight:700;margin:0 0 .6rem
+}
+h1{font-family:var(--serif);font-size:2.6rem;line-height:1.12;margin:0 0 1rem;color:var(--indigo);font-weight:400}
+.masthead h1:last-child{margin-bottom:0}
+.byline{margin:.2rem 0 0;font-size:1rem;color:var(--muted);letter-spacing:.02em}
+.standfirst{margin:0;max-width:36rem;font-size:1.1rem}
+
+/* ---------- headings and prose ---------- */
+h2{font-family:var(--serif);font-size:1.6rem;line-height:1.2;margin:0 0 1rem;font-weight:400;color:var(--indigo)}
+h3{font-family:var(--serif);font-size:1.25rem;line-height:1.25;margin:0;font-weight:400;color:var(--ink)}
+
+p{max-width:38rem}
+p:last-child{margin-bottom:0}
+.note{color:var(--muted);font-size:.95rem}
+
+a{color:var(--indigo)}
+a:focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:2px}
+
+section{padding:2.5rem 0;border-bottom:1px solid var(--rule)}
+section:last-of-type{border-bottom:0}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:2px solid var(--indigo);font-size:.95rem;color:var(--muted)}
+footer p{max-width:38rem}
+footer a{color:var(--indigo)}
+
+/* ---------- the unfinished marker ----------
+   Anything the site cannot yet state as fact is wrapped in .tk. It is meant
+   to be impossible to miss and impossible to publish by accident. NOTES.md
+   lists every one of them. ---------------------------------------------- */
+.tk{
+  display:inline;background:#F7E3C6;color:#7A4A12;
+  border-bottom:1.5px solid var(--amber);border-radius:2px;
+  padding:.05em .35em;
+  font-family:var(--sans);font-size:.74rem;font-weight:700;
+  letter-spacing:.09em;text-transform:uppercase;white-space:normal
+}
+
+/* ---------- metadata line ---------- */
+.meta{
+  margin:.6rem 0 0;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;max-width:38rem
+}
+.worktitle{
+  font-family:var(--serif);font-size:1.3rem;line-height:1.3;
+  color:var(--ink);margin:0 0 .5rem;max-width:34rem
+}
+/* The subtitle sets on its own line. Left to wrap on its own the title breaks
+   after "From", or leaves "Realization" alone on line two; the colon is the
+   right place for it to turn. */
+.worktitle .subtitle{display:block;color:var(--muted);font-size:.94em}
+.provisional{
+  font-family:var(--serif);font-style:italic;font-size:1.1rem;
+  margin:.5rem 0 0;padding-left:.9rem;border-left:3px solid var(--garnet);
+  color:var(--muted);max-width:36rem
+}
+
+/* ---------- cards ---------- */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1.5rem}
+.card{
+  display:block;text-decoration:none;color:inherit;
+  border:1.5px solid var(--rule);border-left:4px solid var(--garnet);
+  border-radius:3px;padding:1.25rem 1.35rem;background:#fff
+}
+.card:hover{border-color:var(--garnet-pale);border-left-color:var(--indigo)}
+.card:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+.card h3{margin-bottom:.35rem;color:var(--indigo)}
+.card p{margin:0;font-size:.97rem;color:var(--muted);max-width:none}
+
+/* ---------- the three principles ---------- */
+ol.principles{list-style:none;margin:0;padding:0;counter-reset:principle}
+ol.principles li{padding:1rem 0;border-top:1px solid var(--rule);counter-increment:principle}
+ol.principles li:first-child{border-top:0}
+ol.principles .name{font-family:var(--serif);font-size:1.2rem;color:var(--ink);display:block}
+ol.principles .name::before{
+  content:counter(principle);
+  font-family:var(--sans);font-size:.8rem;font-weight:700;color:var(--garnet);
+  display:inline-block;min-width:1.6rem;vertical-align:.15em
+}
+ol.principles .q{
+  font-family:var(--serif);font-style:italic;color:var(--muted);
+  margin:.3rem 0 0 1.6rem;display:block;max-width:36rem
+}
+ol.principles .expl{margin:.5rem 0 0 1.6rem;max-width:36rem}
+
+/* ---------- notices (recent writing) ---------- */
+ul.notices{list-style:none;margin:0;padding:0}
+ul.notices li{padding:.85rem 0;border-top:1px solid var(--rule);max-width:38rem}
+ul.notices li:first-child{border-top:0}
+ul.notices .when{
+  display:block;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;margin-bottom:.15rem
+}
+ul.notices a{font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--garnet-pale)}
+ul.notices a:hover{border-bottom-color:var(--indigo)}
+ul.notices .gloss{display:block;color:var(--muted);font-size:.95rem}
+.more{margin-top:1.5rem;font-weight:600}
+
+/* ---------- article entries (writing.html) ---------- */
+.group{padding:2.5rem 0;border-bottom:1px solid var(--rule)}
+.group:last-of-type{border-bottom:0}
+.group > h2{margin-bottom:1.5rem}
+article.piece{
+  padding:1.25rem 0 1.25rem 1.1rem;border-top:1px solid var(--rule);
+  border-left:3px solid var(--accent,var(--garnet));margin-top:1.25rem
+}
+article.piece:first-of-type{margin-top:0}
+article.piece .tag{
+  margin:0 0 .3rem;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--accent,var(--garnet))
+}
+article.piece h3 a{text-decoration:none;border-bottom:1.5px solid var(--garnet-pale)}
+article.piece h3 a:hover{border-bottom-color:var(--indigo)}
+article.piece .sub{margin:.35rem 0 0;font-size:1rem;max-width:36rem}
+.p1{--accent:var(--garnet)}
+.p2{--accent:var(--indigo)}
+.p3{--accent:var(--moss)}
+
+/* ---------- file list ---------- */
+ul.files{list-style:none;margin:1.5rem 0 0;padding:0}
+ul.files li{padding:.55rem 0;border-top:1px solid var(--rule)}
+ul.files li:first-child{border-top:0}
+ul.files a{text-decoration:none;font-weight:600;border-bottom:1.5px solid var(--garnet-pale)}
+ul.files a:hover{border-bottom-color:var(--indigo)}
+/* Gutter file lists: writing.html's citations. The label
+   sits in a 5.5rem gutter inside the list and the entry hangs beside it, so a
+   wrapped line lines up under the first line rather than running back under the
+   label. Below the 34rem breakpoint the label becomes its own line and the gutter
+   is switched off; see the media query at the foot of this file. */
+ul.files.gutter li{position:relative;padding-left:5.5rem}
+ul.files.gutter .kind{position:absolute;left:0;top:.72rem;min-width:0}
+.kind{
+  display:inline-block;min-width:5.5rem;
+  font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);font-weight:700
+}
+
+/* ---------- credentials list (about.html) ---------- */
+dl.record{margin:0}
+dl.record dt{
+  font-family:var(--serif);font-size:1.15rem;color:var(--ink);
+  padding-top:1rem;margin-top:1rem;border-top:1px solid var(--rule)
+}
+dl.record dt:first-child{padding-top:0;margin-top:0;border-top:0}
+dl.record dd{margin:.3rem 0 0;max-width:38rem;color:var(--muted)}
+
+/* ---------- call to action ---------- */
+.cta{
+  display:inline-block;font-weight:600;text-decoration:none;color:#fff;
+  background:var(--indigo);padding:.7rem 1.3rem;border-radius:3px;margin-top:.25rem
+}
+.cta:hover{background:var(--garnet)}
+.cta:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+
+/* ---------- portrait ----------
+   The one photograph on the site: Murray, and nothing else. The design still
+   carries no other imagery — no stock, no decoration, no icons. The frame
+   follows the card language already in use here: a hairline rule with a
+   garnet edge on the left. No shadow, no circle, no crop.
+
+   Murray supplied the file on 3 September 2026: images/murray-cantor.jpg,
+   640 x 776, which is 1998 x 2422 scaled down and not cropped. That is a
+   1 : 1.2125 portrait rather than the 4:5 the layout was drawn for — a 3%
+   difference, absorbed by the width/height attributes on the two <img> tags
+   rather than by cropping, because the original has very little headroom
+   above the hair and none to spare.
+
+   The width/height attributes carry that ratio, not the old 4:5: 160 x 194 in
+   the masthead (exact — 640 x 776 divides cleanly by four) and 300 x 364 on
+   about.html. They are not decoration: the browser reserves the space from
+   them before the picture arrives, so nothing on the page jumps. Measured
+   shift is 0px on the home page and 0.2px on about. If the file is ever
+   replaced, recompute both pairs from the new file's ratio.
+
+   The studio background is a cool near-white that reads about 30 levels
+   darker than this page's warm --paper, so the picture sits as a distinctly
+   grey rectangle rather than a floating white box; the hairline --rule border
+   and the garnet edge are enough to close the join. See NOTES.md section 9.
+   ------------------------------------------------------------------------ */
+img.portrait{
+  display:block;max-width:100%;height:auto;
+  border:1px solid var(--rule);border-left:3px solid var(--garnet);
+  border-radius:3px;background:var(--paper)
+}
+
+/* about.html — the portrait beside the opening biographical paragraphs */
+.bio-lede{display:grid;grid-template-columns:300px 1fr;gap:1.75rem;align-items:start;margin-top:.25rem}
+.bio-lede .portrait{width:300px}
+.bio-lede-text > p:first-child{margin-top:0}
+
+/* index.html — the smaller portrait, left of the name in the masthead. The
+   .mark-corner ornament keeps its top-right corner; the portrait takes the
+   left, so the two never meet. */
+.masthead-body{display:flex;gap:1.5rem;align-items:flex-start}
+.masthead-text{flex:1 1 auto;min-width:0}
+.masthead-text > *:first-child{margin-top:0}
+.masthead .portrait{flex:0 0 auto;width:160px}
+
+/* ---------- narrow screens ---------- */
+@media (max-width:34rem){
+  body{font-size:18px}
+  .wrap{padding:1.5rem 1.15rem 3.5rem}
+  h1{font-size:2rem}
+  h2{font-size:1.4rem}
+  .cards{grid-template-columns:1fr}
+  .kind{display:block;min-width:0;margin-bottom:.15rem}
+  ul.files.gutter li{padding-left:0}
+  ul.files.gutter .kind{position:static}
+  .mark-corner{width:44px;height:44px}
+  .worktitle{font-size:1.15rem}
+  .bio-lede{grid-template-columns:1fr;gap:1.25rem}
+  .bio-lede .portrait{width:100%}
+  .masthead-body{flex-direction:column;gap:1.1rem}
+  .masthead .portrait{width:120px}
+}

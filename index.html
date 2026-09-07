@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#33306B">
+<title>Murray Cantor</title>
+<meta name="description" content="Murray Cantor, PhD mathematician and retired IBM Distinguished Engineer, on the economics of project development and the tooling that improves it, worked in Bayesian mathematics.">
+<!-- Social card image. The path is relative like everything else here, which is
+     correct for local review and for a first look on GitHub Pages, but it is the ONE
+     path that must become absolute at launch: LinkedIn, Slack, X, Facebook and iMessage
+     fetch the card from their own servers, where a relative path resolves to nothing.
+     At the DNS cutover change the content below to
+     https://murraycantor.com/images/murray-cantor.jpg — see NOTES.md section 9. -->
+<meta property="og:image" content="images/murray-cantor.jpg">
+<meta property="og:image:width" content="640">
+<meta property="og:image:height" content="776">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="wrap">
+
+<nav class="sitenav" aria-label="Site">
+  <a href="index.html" aria-current="page">Home</a>
+  <a href="book.html">The book</a>
+  <a href="riskyproject.html">RiskyProject</a>
+  <a href="writing.html">Writing</a>
+  <a href="about.html">About</a>
+</nav>
+
+<header class="masthead">
+  <svg class="mark-corner" viewBox="0 0 64 64" role="img" aria-label="Two probability curves, one wide and one narrow" focusable="false">
+    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M2 54 H62" stroke-opacity=".28"></path>
+      <path d="M4 54 C16 54 20 34 32 34 C44 34 48 54 60 54" stroke-opacity=".42"></path>
+      <path d="M16 54 C24 54 26 12 32 12 C38 12 40 54 48 54"></path>
+    </g>
+  </svg>
+  <div class="masthead-body">
+    <img class="portrait" src="images/murray-cantor.jpg" width="160" height="194" alt="Murray Cantor">
+    <div class="masthead-text">
+      <h1>Murray Cantor</h1>
+      <p class="byline">PhD mathematician &middot; Cantor Consulting LLC</p>
+      <p class="standfirst">I work on the economics of project development, using Bayesian mathematics.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section id="intro" aria-labelledby="intro-h">
+  <h2 id="intro-h">Why this site</h2>
+
+  <p>I hold a PhD in mathematics from the University of California, Berkeley, and I spent my career inside organizations that build things, retiring from IBM as a Distinguished Engineer. My subject has been the same one throughout: the economics of project development &mdash; how an organization commits money to work whose outcome nobody yet knows.</p>
+
+  <p>That describes most development projects. A plan is written, a date is given, a budget is approved, and everyone in the room privately understands that the numbers are softer than they look. The usual answer is to demand firmer numbers. Mine is to measure how soft they are, to manage the work on those terms, and to build the instrumentation that improves the economics rather than the reporting.</p>
+
+  <p>This site collects that work: the book I am writing with two colleagues, the project tool that already provides methods for implementing its techniques, with more to come, and the articles behind both. None of it makes a project more certain than it is. It makes the uncertainty something a manager can measure and act on, rather than something to be talked around.</p>
+</section>
+
+<section id="overview" aria-labelledby="ov-h">
+  <h2 id="ov-h">What you&rsquo;ll find here</h2>
+
+  <p>Three things.</p>
+
+  <div class="cards">
+    <a class="card" href="book.html"><h3>The book</h3><p>What it argues, who it is for, and where it stands. In press, expected from CRC Press.</p></a>
+    <a class="card" href="riskyproject.html"><h3>RiskyProject</h3><p>The project management tool that already provides methods for implementing techniques from the book, with more to come.</p></a>
+    <a class="card" href="writing.html"><h3>Writing</h3><p>Articles and papers on project control, development economics and applied probability.</p></a>
+  </div>
+
+  <p class="note">There is nothing else behind these.</p>
+</section>
+
+<section id="book" aria-labelledby="book-h">
+  <p class="eyebrow">In press</p>
+  <h2 id="book-h">The book</h2>
+
+  <p class="worktitle">Project Economics Under Uncertainty: <span class="subtitle">From Concept to Realization</span></p>
+
+  <p>I am writing it with Glen Alleman and Christian Smart. A development project is capital placed at risk before anyone knows what it will return, and we argue that it should be run on those terms, from the first idea to the delivered system.</p>
+
+  <p>The book rests on three principles, set out below. They fit together into one calculation, and we work it end to end on two case studies.</p>
+
+  <p class="meta">In press, expected from CRC Press</p>
+
+  <p class="more"><a href="book.html">More about the book</a></p>
+</section>
+
+<section id="riskyproject" aria-labelledby="rp-h">
+  <p class="eyebrow">In practice</p>
+  <h2 id="rp-h">RiskyProject</h2>
+
+  <p>RiskyProject is a project management tool that includes quantitative risk management, and risk analysis methods for computing ongoing estimates of project durations and costs. It is made by the Intaver Institute and used by planners in engineering, construction and defense.</p>
+
+  <p>The application already provides methods for implementing techniques described in the book, with more to come. The latest versions use my Bayesian parameter learning algorithm for project control.</p>
+
+  <p class="more"><a href="riskyproject.html">RiskyProject</a></p>
+</section>
+
+<section id="principles" aria-labelledby="pr-h">
+  <h2 id="pr-h">Three principles</h2>
+
+  <p>Everything on this site comes back to three ideas. They are not a methodology. They are the questions I ask before I look at anyone's plan.</p>
+
+  <ol class="principles">
+    <li>
+      <span class="name">Embrace uncertainty</span>
+      <span class="q">How long will this take?</span>
+      <span class="expl">For an innovative project, the exact duration and cost are unknowable. They must be described with a probability distribution, and that distribution includes a way of determining the risk. Once those risks are embraced, they can be managed.</span>
+    </li>
+    <li>
+      <span class="name">Think like an investor</span>
+      <span class="q">What is this project worth, and what would I pay to know more?</span>
+      <span class="expl">A project is capital placed at risk in the expectation of a return. The return may be monetary or enhanced mission fulfillment. Investors hold portfolios, price options, and cut losses early. Development organizations rarely do any of the three, and they pay for it.</span>
+    </li>
+    <li>
+      <span class="name">Apply systems thinking</span>
+      <span class="q">What has to remain true after the release?</span>
+      <span class="expl">Reliability, scalability and maintainability are not features to be added later. They are properties of the whole, and they are decided by choices made long before anyone notices them.</span>
+    </li>
+  </ol>
+</section>
+
+<section id="writing" aria-labelledby="wr-h">
+  <h2 id="wr-h">Recent writing</h2>
+
+  <ul class="notices">
+    <li>
+      <span class="when">Project control</span>
+      <a href="writing.html#evolution-of-project-management">Evolution of Project Management</a>
+      <span class="gloss">Seventy years of software management methods, and what each of them was actually trying to fix.</span>
+    </li>
+    <li>
+      <span class="when">Development economics</span>
+      <a href="writing.html#beyond-the-iron-triangle">Beyond the Iron Triangle</a>
+      <span class="gloss">Fast, good, cheap, pick two is only half an account. Scope, schedule and cost belong in one objective.</span>
+    </li>
+    <li>
+      <span class="when">Applied probability</span>
+      <a href="writing.html#quantitative-risk-management">Quantitative Risk Management</a>
+      <span class="gloss">Counting risks is not the hard part. Connecting the count to a management decision is.</span>
+    </li>
+  </ul>
+
+  <p class="more"><a href="writing.html">All writing</a></p>
+</section>
+
+</main>
+
+<footer>
+  <p>Murray Cantor is a PhD mathematician and a retired IBM Distinguished Engineer whose career has consisted of applying mathematical thinking across a wide range of fields.</p>
+  <p><a href="about.html">About</a> &middot; &copy; 2026 Cantor Consulting LLC</p>
+</footer>
+
+</div>
+</body>
+</html>

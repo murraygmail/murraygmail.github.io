@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://murraycantor.com/sitemap.xml
