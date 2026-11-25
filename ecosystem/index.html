@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#33306B">
+<title>Rabbits, Foxes and Grass &middot; Murray Cantor</title>
+<meta name="description" content="A live, probabilistic agent-based model of rabbits, foxes and grass. Pick a scenario and watch cycles, a steady balance or a collapse emerge from simple local rules.">
+<link rel="stylesheet" href="../site.css">
+<style>
+/* Page-specific styles for the simulator. Everything else comes from site.css.
+   The four simulation colours are data colours, chosen to read against each
+   other on the grid: brown soil, green grass, blue rabbits, red foxes. */
+:root{
+  --soil:#8C5B2B; --grass:#8CCC6B; --rabbit:#263A8C; --fox:#D7261E;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+.sim{padding-top:0}
+.sim-top{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+.status{display:flex;flex-wrap:wrap;gap:.2rem 1rem;font-size:.85rem;font-variant-numeric:tabular-nums;margin-bottom:.5rem;color:var(--muted,#6B6F76)}
+.status b{color:var(--ink,#22252A);font-weight:700}
+.sw{display:inline-block;width:.7rem;height:.7rem;border-radius:2px;margin-right:.35rem;vertical-align:-.05rem}
+#grid{display:block;width:100%;max-width:100%;aspect-ratio:1;image-rendering:pixelated;image-rendering:crisp-edges;border:1px solid var(--rule,#DBD5CA);background:var(--soil)}
+.legend{display:flex;flex-wrap:wrap;gap:.2rem 1rem;font-size:.82rem;color:var(--muted,#6B6F76);margin-top:.45rem}
+.ramp{display:inline-block;width:2.4rem;height:.7rem;border-radius:2px;margin-right:.35rem;vertical-align:-.05rem;background:linear-gradient(90deg,var(--soil),var(--grass))}
+.kicker{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--garnet,#8E3B52);font-weight:700;margin:0 0 .5rem}
+.presets{display:grid;gap:.45rem;border:0;margin:0;padding:0;min-width:0}
+.preset{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:.6rem;align-items:start;cursor:pointer;background:#fff;
+  border:1.5px solid var(--rule,#DBD5CA);border-left:4px solid var(--rule,#DBD5CA);border-radius:3px;padding:.5rem .75rem
+}
+.preset:hover{border-color:var(--garnet-pale,#C58FA0);border-left-color:var(--garnet-pale,#C58FA0)}
+.preset:has(input:checked){border-color:var(--garnet-pale,#C58FA0);border-left-color:var(--garnet,#8E3B52)}
+.preset input{width:1.05rem;height:1.05rem;margin:.2rem 0 0;accent-color:var(--indigo,#33306B);cursor:pointer}
+.preset b{display:block;font-family:var(--serif,"Bookman Old Style",Georgia,serif);font-weight:400;font-size:1rem;color:var(--indigo,#33306B)}
+.preset .why{display:block;font-size:.82rem;color:var(--muted,#6B6F76);line-height:1.4}
+.controls{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:0 0 1.25rem;padding:.6rem .75rem;background:#fff;border:1px solid var(--rule,#DBD5CA);border-radius:3px}
+.btn{font:600 .9rem var(--sans,Calibri,"Segoe UI",-apple-system,Arial,sans-serif);padding:.45rem 1rem;border-radius:3px;border:1.5px solid var(--indigo,#33306B);background:#fff;color:var(--indigo,#33306B);cursor:pointer;min-width:5.2rem}
+.btn.primary{background:var(--indigo,#33306B);color:#fff}
+.btn:hover{border-color:var(--garnet,#8E3B52)}
+.btn.primary:hover{background:var(--garnet,#8E3B52);border-color:var(--garnet,#8E3B52)}
+.btn:focus-visible,.sim input:focus-visible{outline:3px solid var(--amber,#E08A3C);outline-offset:3px}
+.speed{display:flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--muted,#6B6F76);margin-left:auto}
+.speed input{width:7.5rem;accent-color:var(--indigo,#33306B)}
+.speed output{font-variant-numeric:tabular-nums;min-width:2.6rem}
+.chartbox{background:#fff;border:1px solid var(--rule,#DBD5CA);border-radius:3px;padding:.75rem .75rem .4rem}
+.chartbox .kicker{margin-bottom:.25rem}
+#chart,#phase{display:block;width:100%;height:210px}
+.charts{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:1rem;margin-top:1.25rem}
+@media (max-width:34rem){.charts{grid-template-columns:1fr}}
+.settings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem 1.5rem;margin-top:1.5rem}
+.setgroup h3{font-family:var(--sans,Calibri,"Segoe UI",-apple-system,Arial,sans-serif);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;margin:0 0 .5rem;color:var(--ink,#22252A)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 .5rem;align-items:center;font-size:.82rem;margin-bottom:.3rem}
+.row label{color:var(--muted,#6B6F76)}
+.row output{font-family:var(--mono);font-size:.78rem;font-variant-numeric:tabular-nums}
+.row input{grid-column:1/-1;width:100%;margin:0;accent-color:var(--indigo,#33306B)}
+.row.changed label{color:var(--garnet,#8E3B52);font-weight:700}
+.setup{display:grid;grid-template-columns:1fr 1fr;gap:.4rem .6rem}
+.setup label{display:grid;gap:.1rem;font-size:.82rem;color:var(--muted,#6B6F76)}
+.setup input{width:100%;font:.9rem var(--mono);padding:.25rem .4rem;border:1px solid var(--rule,#DBD5CA);border-radius:3px;background:#fff;color:var(--ink,#22252A)}
+.sim .note{font-size:.85rem;margin-top:.75rem}
+/* documentation */
+.scen{padding:1rem 0 1rem 1.1rem;border-left:3px solid var(--garnet,#8E3B52);border-top:1px solid var(--rule,#DBD5CA);margin-top:1rem}
+.scen h3{color:var(--indigo,#33306B);margin-bottom:.3rem}
+.scen .meta{margin:0 0 .5rem}
+.scen p{margin:.4rem 0 0}
+ol.steps{max-width:38rem;padding-left:1.4rem}
+ol.steps li{margin:.5rem 0}
+.tablewrap{overflow-x:auto}
+table.matrix td:nth-child(2){font-family:var(--mono);font-size:.9rem;white-space:nowrap}
+table.matrix td{font-size:.95rem}
+ul.tries{max-width:38rem;padding-left:1.2rem}
+ul.tries li{margin:.6rem 0}
+@media (max-width:44rem){
+  .sim-top{grid-template-columns:1fr}
+  .settings{grid-template-columns:1fr 1fr}
+}
+@media (max-width:34rem){
+  .settings{grid-template-columns:1fr}
+  .speed{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="sitenav" aria-label="Site">
+  <a href="../index.html">Home</a>
+  <a href="../book.html">The book</a>
+  <a href="../riskyproject.html">RiskyProject</a>
+  <a href="../writing.html">Writing</a>
+  <a href="../ai.html">AI</a>
+  <a href="index.html" aria-current="page">Models</a>
+  <a href="../about.html">About</a>
+</nav>
+
+<header class="masthead">
+  <p class="eyebrow">Agent-based models</p>
+  <h1>Rabbits, Foxes and Grass</h1>
+  <p class="standfirst">A live model of a small ecosystem, built from individual animals that each follow a few local rules that run on chance. Cycles, a steady balance or a collapse all emerge from those rules, though no equation for them appears anywhere in the model.</p>
+</header>
+
+<main>
+
+<section class="sim" aria-label="Simulator">
+  <div class="controls">
+    <button class="btn primary" id="b-run" type="button">Pause</button>
+    <button class="btn" id="b-step" type="button">Step</button>
+    <button class="btn" id="b-reset" type="button">Restart</button>
+    <label class="speed" for="speed">Speed <input type="range" id="speed" min="1" max="120" value="30"><output id="speed-o">30/s</output></label>
+  </div>
+
+  <div class="sim-top">
+    <div>
+      <div class="status">
+        <span>Step <b id="s-step">0</b></span>
+        <span><i class="sw" style="background:var(--rabbit)"></i>Rabbits <b id="s-r">0</b></span>
+        <span><i class="sw" style="background:var(--fox)"></i>Foxes <b id="s-f">0</b></span>
+        <span><i class="sw" style="background:var(--grass)"></i>Grass <b id="s-g">0</b>%</span>
+      </div>
+      <canvas id="grid" width="80" height="80" role="img" aria-label="The grid: grass shading from brown to green, blue rabbits and red foxes"></canvas>
+      <div class="legend">
+        <span><i class="ramp"></i>Bare ground to full grass</span>
+        <span><i class="sw" style="background:var(--rabbit)"></i>Rabbit</span>
+        <span><i class="sw" style="background:var(--fox)"></i>Fox</span>
+      </div>
+    </div>
+    <div>
+      <fieldset class="presets" id="presets"><legend class="kicker">Choose a scenario</legend></fieldset>
+    </div>
+  </div>
+
+
+  <div class="charts">
+    <div class="chartbox">
+      <p class="kicker">Population over time</p>
+      <canvas id="chart" role="img" aria-label="Rabbit and fox populations by step"></canvas>
+    </div>
+    <div class="chartbox">
+      <p class="kicker">Phase plot: foxes against rabbits</p>
+      <canvas id="phase" role="img" aria-label="Phase plot of fox population against rabbit population"></canvas>
+    </div>
+  </div>
+
+  <div class="settings" id="settings"></div>
+  <p class="note">Sliders change the running world at once; a setting you have moved away from the scenario's value turns garnet. The starting setup takes effect when you press Restart. Enter a seed to replay exactly the same run; leave it blank for a new run each time.</p>
+</section>
+
+<section aria-labelledby="use-h">
+  <h2 id="use-h">How to use it</h2>
+  <p>The model starts running as soon as the page opens. Each square on the grid is one cell. Its colour shows how much grass it holds, from bare brown ground to full green, and a blue or red square is a rabbit or a fox standing on it. The chart below the grid traces both populations step by step.</p>
+  <p>The phase plot beside it shows the same history a different way. Each point is one moment, placed by the number of rabbits across and the number of foxes up, and the trail joins the moments in order. The last 200 steps are drawn dark, older history fades, and the dot marks the present. The axes fit the last 500 steps, so the early boom does not squash the later picture. Time disappears from this picture, which leaves the shape of the behaviour.</p>
+  <ul class="tries">
+    <li><b>A loop</b> means a cycle. The trail runs anticlockwise: rabbits rise (rightward), then foxes rise (upward), then rabbits fall (leftward), then foxes fall (downward), and round again.</li>
+    <li><b>A tight knot</b> means a near-equilibrium. The trail wanders in a small region and never leaves it.</li>
+    <li><b>A line into an axis</b> means extinction. If the trail hits the bottom edge the foxes are gone, and if it hits the left edge the rabbits are.</li>
+  </ul>
+  <ul class="tries">
+    <li><b>Choose a scenario</b> to load a tested set of values and restart the run. Only one scenario is active at a time. They are the quickest way to see the model&rsquo;s main behaviours.</li>
+    <li><b>Pause</b> and <b>Run</b> stop and restart time. <b>Step</b> advances one step at a time, which is the best way to watch individual animals move, eat and breed.</li>
+    <li><b>Restart</b> builds a new world from the current settings and starting setup.</li>
+    <li><b>Speed</b> sets how many steps run each second, from 1 to 120.</li>
+  </ul>
+  <p>Every event in the model is random, so two runs of the same scenario differ in detail. The pattern each scenario describes is what you should see on most runs.</p>
+</section>
+
+<section aria-labelledby="scen-h">
+  <h2 id="scen-h">The five scenarios</h2>
+  <p>Each scenario changes only a few settings from the defaults. I tested each one on several random seeds, running 1,500 steps on the 80 by 80 grid, and the description gives what happened on all of them.</p>
+
+  <div class="scen">
+    <h3>Fox, rabbit and grass cycles</h3>
+    <p class="meta">The default settings</p>
+    <p>All three species coexist, and the populations rise and fall over and over. Rabbits multiply while grass is plentiful. The foxes, now well fed, multiply in turn and eat the rabbits down. The foxes then starve back, and the grass recovers in the gaps the rabbits leave. A full cycle takes roughly 80 to 160 steps. On the phase plot this draws large, irregular anticlockwise loops, no two quite the same.</p>
+    <p>Watch the grid as well as the chart. The cycle is not in step everywhere at once. Waves of rabbits sweep across green patches with foxes close behind, and leave brown ground that slowly greens again.</p>
+  </div>
+
+  <div class="scen">
+    <h3>Near-equilibrium</h3>
+    <p class="meta">Fox energy per rabbit 8 &middot; fox energy to breed 30</p>
+    <p>Each rabbit is worth less to a fox, but a fox needs less stored energy to breed. The swings shrink and the populations settle and level off: rabbits stay between roughly 550 and 1,400 and foxes between roughly 400 and 550. The world still churns at the level of single animals, but the totals stay steady. The phase plot shows a small knot instead of a loop.</p>
+  </div>
+
+  <div class="scen">
+    <h3>Rabbits and grass only</h3>
+    <p class="meta">No foxes &middot; grass regrowth 0.01 &middot; rabbit energy to breed 15</p>
+    <p>With no predator, the only check on rabbits is food. They boom, strip the grass, starve back, and boom again when the grass returns, repeating about every 80 steps. These are clean cycles with no predator involved, driven by grass alone. With no foxes, the phase plot is a line running back and forth along the bottom edge.</p>
+  </div>
+
+  <div class="scen">
+    <h3>Foxes starve</h3>
+    <p class="meta">Grass regrowth 0.01 &middot; fox energy per rabbit 8 &middot; fox energy to breed 30</p>
+    <p>Slow-growing grass keeps the rabbits too thin on the ground to feed the foxes, and the foxes die out at around step 55 to 75. The rabbits survive and settle into their own boom and bust with the grass, about every 60 steps. The phase plot drops to the bottom edge and then slides back and forth along it.</p>
+  </div>
+
+  <div class="scen">
+    <h3>Overhunting</h3>
+    <p class="meta">Catch chance 0.5 &middot; fox energy to breed 30</p>
+    <p>The foxes are too good at hunting. They eat every rabbit by around step 40 to 70, and then starve themselves by around step 80 to 100. The grass is left to grow back over an empty world. A predator that is too efficient destroys its own food supply. On the phase plot the trail swings out to the right as the rabbits boom, curls up and to the left as the foxes eat them, then runs down the left edge to zero.</p>
+  </div>
+</section>
+
+<section aria-labelledby="rules-h">
+  <h2 id="rules-h">The rules</h2>
+  <p>The world is an 80 by 80 grid that wraps around, so an animal walking off the right edge reappears on the left. Every cell holds an amount of grass between 0 (bare) and 1 (full), and at most one animal. Each animal carries its own energy, its age and its own lifespan.</p>
+  <p>One step of time works like this.</p>
+  <ol class="steps">
+    <li><b>Grass grows.</b> Every cell gains the regrowth amount, up to full.</li>
+    <li><b>The animals take turns, in a random order.</b> Each animal in turn does the following.</li>
+    <li><b>It ages and burns energy.</b> It gets one step older and uses one unit of energy. It dies if its energy reaches zero (starvation), if it reaches its lifespan (old age), or with a small chance each step (disease and accidents). Each animal&rsquo;s lifespan is drawn when it is born and varies by about 20% around the setting.</li>
+    <li><b>A rabbit moves and eats.</b> With the move chance, it steps to whichever empty neighbouring cell has the most grass. It then eats up to half a unit of grass from its cell and gains energy in proportion to what it ate.</li>
+    <li><b>A fox hunts or follows its nose.</b> If a rabbit is next to it, the fox tries to catch it and succeeds with the catch chance. It then moves into the rabbit&rsquo;s cell and gains energy. Otherwise it moves to the empty neighbouring cell with the most rabbits around it.</li>
+    <li><b>It may breed.</b> An animal with at least the breeding energy has the breeding chance to produce one young in an empty neighbouring cell. Parent and young split the parent&rsquo;s energy evenly, so breeding costs the parent half its reserves.</li>
+  </ol>
+  <p>Energy is capped, at 20 for rabbits and 60 for foxes, so an animal cannot store food without limit.</p>
+</section>
+
+<section aria-labelledby="set-h">
+  <h2 id="set-h">The settings</h2>
+  <div class="tablewrap">
+  <table class="matrix">
+    <thead><tr><th scope="col">Setting</th><th scope="col">Default</th><th scope="col">What it controls</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" colspan="3">Rabbits</th></tr>
+      <tr><td>Energy to breed</td><td>10</td><td>Stored energy a rabbit needs before it can breed. Higher values mean slower breeding and better-fed parents.</td></tr>
+      <tr><td>Breeding chance</td><td>0.30</td><td>Chance each step that a rabbit with enough energy actually breeds.</td></tr>
+      <tr><td>Energy per meal</td><td>4</td><td>Energy from eating a full half-unit bite of grass. Less grass in the cell means a smaller meal.</td></tr>
+      <tr><td>Lifespan</td><td>60</td><td>Average maximum age in steps.</td></tr>
+      <tr><td>Random death</td><td>0.010</td><td>Chance each step of dying from disease or accident, whatever the rabbit&rsquo;s condition.</td></tr>
+      <tr><td>Moves</td><td>0.80</td><td>Chance each step that a rabbit moves to better grass.</td></tr>
+      <tr><th scope="row" colspan="3">Foxes</th></tr>
+      <tr><td>Catch chance</td><td>0.20</td><td>Chance that a fox catches a neighbouring rabbit it goes after.</td></tr>
+      <tr><td>Energy per rabbit</td><td>15</td><td>Energy a fox gains from one rabbit.</td></tr>
+      <tr><td>Energy to breed</td><td>45</td><td>Stored energy a fox needs before it can breed.</td></tr>
+      <tr><td>Breeding chance</td><td>0.20</td><td>Chance each step that a fox with enough energy breeds.</td></tr>
+      <tr><td>Lifespan</td><td>150</td><td>Average maximum age in steps.</td></tr>
+      <tr><td>Random death</td><td>0.005</td><td>Chance each step of dying from other causes.</td></tr>
+      <tr><th scope="row" colspan="3">Grass and starting setup</th></tr>
+      <tr><td>Regrowth per step</td><td>0.030</td><td>Grass added to every cell each step. At 0.03 a bare cell takes about 33 steps to grow back fully.</td></tr>
+      <tr><td>Rabbits, foxes</td><td>400, 20</td><td>Animals placed at random when the world is built. They start with random energy and random ages.</td></tr>
+      <tr><td>Grid size</td><td>80</td><td>Width and height of the world in cells.</td></tr>
+      <tr><td>Seed</td><td>blank</td><td>Fixes the random numbers, so the same seed and settings replay the same run.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section aria-labelledby="abm-h">
+  <h2 id="abm-h">Why this is an agent-based model</h2>
+  <p>An agent-based model simulates a system as a collection of individuals, each following its own simple rules, and lets the behaviour of the whole emerge from their interactions. Nothing in the model describes the population directly.</p>
+  <p>Here the agents are the rabbits and foxes. Three features matter.</p>
+  <ul class="tries">
+    <li><b>Each agent has its own state.</b> Every animal keeps its own energy, age and lifespan. That is what lets hunger, breeding condition and old age matter, one animal at a time.</li>
+    <li><b>All interaction is local.</b> An animal sees only the eight cells around it: the grass it can eat, the rabbit it can catch, the empty cell it can move or breed into. There is no global view and no plan.</li>
+    <li><b>Everything runs on chance, one agent at a time.</b> Almost every rule fires with a probability, so the same starting world can unfold in different ways. The animals act in a fresh random order each step, and each one sees the world as the animals before it left it. This is what stops two foxes from eating the same rabbit, or two animals from moving into the same empty cell.</li>
+  </ul>
+  <p>The grass is the landscape the agents live on: a grid of cells that each regrow on their own and are eaten down by the rabbits standing on them.</p>
+</section>
+
+<section aria-labelledby="lv-h">
+  <h2 id="lv-h">How this differs from the textbook model</h2>
+  <p>The classical account of predators and prey is the Lotka&ndash;Volterra equations, two differential equations for the sizes of the two populations. They produce smooth, endless cycles, and their only inputs are population totals.</p>
+  <p>To work with totals alone, the equations have to assume that every fox is equally likely to meet every rabbit, as if the whole population were constantly stirred together. Real animals are not like that. A rabbit meets the foxes near it, eats the grass under it, and can survive in a patch the foxes have not reached yet. The equations never claimed to be realistic. They were built to show, as simply as possible, that predation alone can make populations cycle. A model on a grid puts back what that simplification leaves out.</p>
+  <p>This model has no population equation at all. It has individual animals that are born, eat, starve, grow old and die, on a landscape where food runs out locally and grows back slowly. The cycles it shows come out of those individual lives. They are irregular in length and height, differ from place to place on the grid, and can end, which the classical cycles never do. The rabbits-and-grass scenario shows that a food supply which takes time to recover is enough on its own to make a population cycle, with no predator at all.</p>
+  <p>It is still a toy. The units of energy and time are arbitrary, and the settings are chosen to make the behaviours clear, not fitted to any real population of rabbits or foxes.</p>
+</section>
+
+<section aria-labelledby="try-h">
+  <h2 id="try-h">Things to try</h2>
+  <p>Each of these starts from the default scenario and changes one thing. I tested each on six random seeds; the results below held on all six unless noted.</p>
+  <ul class="tries">
+    <li><b>Make the grass grow faster</b> (regrowth 0.06). It sounds like it should help everyone, but the system collapses. The rabbits boom, the foxes boom after them and eat every rabbit, then starve. This echoes what ecologists call the paradox of enrichment, where more food at the bottom of a food chain destabilises it.</li>
+    <li><b>Make the grass grow slower</b> (regrowth 0.015). All three survive, and the cycles become more regular, at about 70 steps.</li>
+    <li><b>Make the foxes clumsier</b> (catch chance 0.1). The swings flatten out and all three coexist at steadier levels.</li>
+    <li><b>Make the foxes better hunters</b> (catch chance 0.35). Usually the foxes overhunt and everything dies; on two of the six seeds the system survived with large swings.</li>
+    <li><b>Shrink the world</b> (grid size 30, with 60 rabbits and 3 foxes, then Restart). Every run ends in extinction, because small populations are easily wiped out by a run of bad luck. A larger world (120, with 900 rabbits and 45 foxes) survived on every seed. Space itself keeps the system alive.</li>
+    <li><b>Stop the rabbits moving</b> (Moves 0). The rabbits eat out their own cells and starve within about 50 steps, and the foxes follow. Being able to move to fresh grass is essential.</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <p>Murray Cantor is a PhD mathematician and a retired IBM Distinguished Engineer whose career has consisted of applying mathematical thinking across a wide range of fields.</p>
+  <p><a href="../about.html">About</a> &middot; &copy; 2026 Cantor Consulting LLC</p>
+</footer>
+
+</div>
+
+<script src="engine.js"></script>
+<script>
+(function () {
+  "use strict";
+  var E = window.Eco;
+  var GROUPS = [
+    { name: "Rabbits", items: [
+      ["r_breedEnergy", "Energy to breed", 2, 20, 1, ["rabbit", "breedEnergy"]],
+      ["r_pBreed", "Breeding chance", 0, 1, 0.01, ["rabbit", "pBreed"]],
+      ["r_food", "Energy per meal", 1, 10, 0.5, ["rabbit", "food"]],
+      ["r_lifespan", "Lifespan (steps)", 10, 200, 1, ["rabbit", "lifespan"]],
+      ["r_pDeath", "Random death", 0, 0.1, 0.001, ["rabbit", "pDeath"]],
+      ["r_pMove", "Moves", 0, 1, 0.01, ["rabbit", "pMove"]] ] },
+    { name: "Foxes", items: [
+      ["pCatch", "Catch chance", 0, 1, 0.01, ["pCatch"]],
+      ["f_food", "Energy per rabbit", 1, 40, 1, ["fox", "food"]],
+      ["f_breedEnergy", "Energy to breed", 5, 60, 1, ["fox", "breedEnergy"]],
+      ["f_pBreed", "Breeding chance", 0, 1, 0.01, ["fox", "pBreed"]],
+      ["f_lifespan", "Lifespan (steps)", 10, 400, 1, ["fox", "lifespan"]],
+      ["f_pDeath", "Random death", 0, 0.1, 0.001, ["fox", "pDeath"]] ] },
+    { name: "Grass", items: [
+      ["regrow", "Regrowth per step", 0, 0.1, 0.001, ["regrow"]] ] }
+  ];
+  var SETUP = { rabbits: "in-rabbits", foxes: "in-foxes", size: "in-size" };
+  var COL = { soil: [140, 91, 43], grass: [140, 204, 107], rabbit: [38, 58, 140], fox: [215, 38, 30],
+              rule: "#DBD5CA", muted: "#6B6F76", rabbitL: "#263A8C", foxL: "#D7261E" };
+
+  var v = Object.assign({}, E.DEFAULTS), base = {}, eco, hist, img, running = true;
+  function $(id) { return document.getElementById(id); }
+  function fmt(x, step) { return step >= 1 ? String(Math.round(x)) : x.toFixed(step < 0.01 ? 3 : 2); }
+
+  // ---- settings panel ----
+  var inputs = {}, settingsEl = $("settings");
+  GROUPS.forEach(function (g) {
+    var div = document.createElement("div");
+    div.className = "setgroup";
+    div.innerHTML = "<h3>" + g.name + "</h3>";
+    g.items.forEach(function (it) {
+      var key = it[0], step = it[4], path = it[5];
+      var row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = '<label for="sl-' + key + '">' + it[1] + '</label><output id="o-' + key + '"></output>' +
+        '<input type="range" id="sl-' + key + '" min="' + it[2] + '" max="' + it[3] + '" step="' + step + '">';
+      var inp = row.querySelector("input"), out = row.querySelector("output");
+      inp.addEventListener("input", function () {
+        v[key] = +inp.value; out.textContent = fmt(v[key], step);
+        var o = eco; for (var i = 0; i < path.length - 1; i++) o = o[path[i]];
+        o[path[path.length - 1]] = v[key];
+        row.classList.toggle("changed", Math.abs(v[key] - base[key]) > 1e-9);
+      });
+      inputs[key] = { inp: inp, out: out, step: step, row: row };
+      div.appendChild(row);
+    });
+    if (g.name === "Grass") {
+      var s = document.createElement("div");
+      s.innerHTML = '<h3 style="margin-top:1rem">Starting setup</h3><div class="setup">' +
+        '<label for="in-rabbits">Rabbits<input type="number" id="in-rabbits" min="0" max="5000" step="10"></label>' +
+        '<label for="in-foxes">Foxes<input type="number" id="in-foxes" min="0" max="1000"></label>' +
+        '<label for="in-size">Grid size<input type="number" id="in-size" min="20" max="200" step="10"></label>' +
+        '<label for="in-seed">Seed<input type="number" id="in-seed" placeholder="random"></label></div>';
+      div.appendChild(s);
+    }
+    settingsEl.appendChild(div);
+  });
+  function syncControls() {
+    for (var k in inputs) {
+      var s = inputs[k]; s.inp.value = v[k]; s.out.textContent = fmt(v[k], s.step);
+      s.row.classList.toggle("changed", Math.abs(v[k] - base[k]) > 1e-9);
+    }
+    for (var j in SETUP) $(SETUP[j]).value = v[j];
+  }
+
+  // ---- scenarios ----
+  var presetsEl = $("presets");
+  E.PRESETS.forEach(function (p, i) {
+    var b = document.createElement("label");
+    b.className = "preset";
+    b.innerHTML = '<input type="radio" name="scenario" id="sc-' + i + '" value="' + i + '"><span><b>' + p.name + '</b><span class="why">' + p.note + "</span></span>";
+    b.querySelector("input").addEventListener("change", function () { loadPreset(i); });
+    presetsEl.appendChild(b);
+  });
+  function loadPreset(i) {
+    v = Object.assign({}, E.DEFAULTS, E.PRESETS[i].set);
+    base = Object.assign({}, v);
+    $("sc-" + i).checked = true;
+    syncControls();
+    restart(true);
+  }
+
+  // ---- world ----
+  var grid = $("grid"), gctx = grid.getContext("2d");
+  function restart(run) {
+    for (var k in SETUP) {
+      var el = $(SETUP[k]), x = Math.round(+el.value);
+      if (el.value !== "" && isFinite(x)) v[k] = Math.max(+el.min, Math.min(+el.max, x));
+    }
+    v.rabbits = Math.min(v.rabbits, v.size * v.size);
+    v.foxes = Math.min(v.foxes, v.size * v.size - v.rabbits);
+    for (var j in SETUP) $(SETUP[j]).value = v[j];
+    var seedTxt = $("in-seed").value.trim();
+    eco = E.build(v, seedTxt === "" ? null : Math.round(+seedTxt));
+    grid.width = grid.height = eco.n;
+    img = gctx.createImageData(eco.n, eco.n);
+    hist = { r: [], f: [] };
+    record();
+    setRunning(run);
+    draw();
+  }
+  function record() { var c = eco.counts(); hist.r.push(c.rabbits); hist.f.push(c.foxes); hist.last = c; }
+
+  function draw() {
+    var d = img.data, kind = eco.kind, grass = eco.grass, S = COL.soil, G = COL.grass;
+    for (var i = 0, j = 0; i < kind.length; i++, j += 4) {
+      var c = kind[i] === E.RABBIT ? COL.rabbit : kind[i] === E.FOX ? COL.fox : null;
+      if (c) { d[j] = c[0]; d[j + 1] = c[1]; d[j + 2] = c[2]; }
+      else { var g = grass[i]; d[j] = S[0] + (G[0] - S[0]) * g; d[j + 1] = S[1] + (G[1] - S[1]) * g; d[j + 2] = S[2] + (G[2] - S[2]) * g; }
+      d[j + 3] = 255;
+    }
+    gctx.putImageData(img, 0, 0);
+    var l = hist.last;
+    $("s-step").textContent = eco.generation; $("s-r").textContent = l.rabbits.toLocaleString();
+    $("s-f").textContent = l.foxes.toLocaleString(); $("s-g").textContent = Math.round(l.grassPct);
+    drawChart();
+    drawPhase();
+  }
+
+  var chart = $("chart"), cctx = chart.getContext("2d");
+  function niceMax(x) { var p = Math.pow(10, Math.floor(Math.log10(x))); var ms = [1, 2, 2.5, 5, 10]; for (var i = 0; i < ms.length; i++) if (ms[i] * p >= x) return ms[i] * p; return 10 * p; }
+  function drawChart() {
+    var dpr = window.devicePixelRatio || 1, W = chart.clientWidth, H = chart.clientHeight;
+    if (chart.width !== Math.round(W * dpr) || chart.height !== Math.round(H * dpr)) { chart.width = Math.round(W * dpr); chart.height = Math.round(H * dpr); }
+    var ctx = cctx; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    var L = 46, R = 10, T = 8, B = 22, w = W - L - R, h = H - T - B;
+    var n = hist.r.length, xmax = Math.max(100, n - 1), ymax = 10;
+    for (var i = 0; i < n; i++) ymax = Math.max(ymax, hist.r[i], hist.f[i]);
+    ymax = niceMax(ymax * 1.05);
+    ctx.font = "12px Calibri, 'Segoe UI', -apple-system, Arial, sans-serif";
+    ctx.fillStyle = COL.muted; ctx.strokeStyle = COL.rule; ctx.lineWidth = 1;
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (var k = 0; k <= 4; k++) { var y = Math.round(T + h - h * k / 4) + 0.5; ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + w, y); ctx.stroke(); ctx.fillText(Math.round(ymax * k / 4).toLocaleString(), L - 6, y); }
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    var xs = niceMax(xmax / 5);
+    for (var x = 0; x <= xmax; x += xs) ctx.fillText(x.toLocaleString(), L + w * x / xmax, T + h + 5);
+    function line(a, col) {
+      ctx.strokeStyle = col; ctx.lineWidth = 1.75; ctx.beginPath();
+      var stride = Math.max(1, Math.floor(n / (w * 2)));
+      for (var i = 0; i < n; i += stride) { var px = L + w * i / xmax, py = T + h - h * a[i] / ymax; if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
+      var ex = L + w * (n - 1) / xmax, ey = T + h - h * a[n - 1] / ymax;
+      ctx.lineTo(ex, ey); ctx.stroke();
+      ctx.fillStyle = col; ctx.beginPath(); ctx.arc(ex, ey, 3, 0, 7); ctx.fill();
+    }
+    line(hist.r, COL.rabbitL); line(hist.f, COL.foxL);
+  }
+
+
+  var phase = $("phase"), pctx = phase.getContext("2d");
+  function drawPhase() {
+    var dpr = window.devicePixelRatio || 1, W = phase.clientWidth, H = phase.clientHeight;
+    if (phase.width !== Math.round(W * dpr) || phase.height !== Math.round(H * dpr)) { phase.width = Math.round(W * dpr); phase.height = Math.round(H * dpr); }
+    var ctx = pctx; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    var L = 56, R = 12, T = 8, B = 34, w = W - L - R, h = H - T - B;
+    var n = hist.r.length, xm = 10, ym = 10;
+    // Axes fit the last 500 steps, so an early boom does not squash later loops.
+    for (var i = Math.max(0, n - 500); i < n; i++) { if (hist.r[i] > xm) xm = hist.r[i]; if (hist.f[i] > ym) ym = hist.f[i]; }
+    xm = niceMax(xm * 1.05); ym = niceMax(ym * 1.05);
+    ctx.font = "12px Calibri, 'Segoe UI', -apple-system, Arial, sans-serif";
+    ctx.fillStyle = COL.muted; ctx.strokeStyle = COL.rule; ctx.lineWidth = 1;
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (var k = 0; k <= 4; k++) { var y = Math.round(T + h - h * k / 4) + 0.5; ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + w, y); ctx.stroke(); ctx.fillText(Math.round(ym * k / 4).toLocaleString(), L - 6, y); }
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for (k = 0; k <= 2; k++) { ctx.textAlign = k === 2 ? "right" : "center"; ctx.fillText(Math.round(xm * k / 2).toLocaleString(), k === 2 ? L + w + R - 1 : L + w * k / 2, T + h + 4); }
+    ctx.textAlign = "center";
+    ctx.fillText("Rabbits", L + w / 2, T + h + 18);
+    ctx.save(); ctx.translate(9, T + h / 2); ctx.rotate(-Math.PI / 2); ctx.textBaseline = "middle"; ctx.fillText("Foxes", 0, 0); ctx.restore();
+    function X(i) { return L + w * hist.r[i] / xm; }
+    function Y(i) { return T + h - h * hist.f[i] / ym; }
+    var RECENT = 200, cut = Math.max(0, n - RECENT);
+    ctx.save(); ctx.beginPath(); ctx.rect(L, T - 4, w + 4, h + 8); ctx.clip();
+    ctx.lineJoin = "round";
+    if (cut > 0) {
+      ctx.strokeStyle = "rgba(51,48,107,0.13)"; ctx.lineWidth = 1; ctx.beginPath();
+      var stride = Math.max(1, Math.floor(cut / 1500));
+      ctx.moveTo(X(0), Y(0));
+      for (i = stride; i <= cut; i += stride) ctx.lineTo(X(i), Y(i));
+      ctx.lineTo(X(cut), Y(cut)); ctx.stroke();
+    }
+    ctx.lineWidth = 1.6;
+    for (i = cut + 1; i < n; i++) {
+      var a = 0.15 + 0.85 * (i - cut) / Math.max(1, n - 1 - cut);
+      ctx.strokeStyle = "rgba(51,48,107," + a.toFixed(3) + ")";
+      ctx.beginPath(); ctx.moveTo(X(i - 1), Y(i - 1)); ctx.lineTo(X(i), Y(i)); ctx.stroke();
+    }
+    ctx.fillStyle = "#8E3B52"; ctx.beginPath(); ctx.arc(X(n - 1), Y(n - 1), 4, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+
+  // ---- time ----
+  var rate = 30, acc = 0, lastT = performance.now();
+  function tick(t) {
+    var dt = Math.min(250, t - lastT); lastT = t;
+    if (running) {
+      acc += dt * rate / 1000;
+      var k = Math.min(20, Math.floor(acc)); acc -= Math.floor(acc);
+      if (k > 0) { for (var i = 0; i < k; i++) { eco.step(); record(); } draw(); }
+      if (hist.last.rabbits === 0 && hist.last.foxes === 0) setRunning(false);
+    }
+    requestAnimationFrame(tick);
+  }
+  function setRunning(on) { running = on; $("b-run").textContent = on ? "Pause" : "Run"; }
+  $("b-run").addEventListener("click", function () { setRunning(!running); });
+  $("b-step").addEventListener("click", function () { setRunning(false); eco.step(); record(); draw(); });
+  $("b-reset").addEventListener("click", function () { restart(true); });
+  $("speed").addEventListener("input", function (e) { rate = +e.target.value; $("speed-o").textContent = rate + "/s"; });
+  window.addEventListener("resize", function () { drawChart(); drawPhase(); });
+
+  window.ecoApp = { get eco() { return eco; }, get hist() { return hist; }, loadPreset: loadPreset };
+  loadPreset(0);
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

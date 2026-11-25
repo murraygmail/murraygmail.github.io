@@ -315,3 +315,8 @@ div.card .cardtitle{font-family:var(--serif);color:var(--ink);text-decoration:no
 div.card .cardtitle:hover{border-bottom-color:var(--indigo)}
 div.card p + p.meta{margin-top:.5rem}
 div.card p.meta a{color:var(--indigo)}
+
+/* ---------- home: five cards (v48) ----------
+   With the Models card the overview holds five. The book card spans the full
+   row, so the other four sit in two even pairs and none is left alone. */
+.cards .card-book{grid-column:1/-1}

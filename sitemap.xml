@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Hand-written. Ten pages. Add a <url> block here whenever a page is added,
+<!-- Hand-written. Eleven pages. Add a <url> block here whenever a page is added,
      and update <lastmod> when a page changes. 404.html is deliberately absent. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://murraycantor.com/</loc>
-    <lastmod>2026-11-20</lastmod>
+    <lastmod>2026-11-25</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
@@ -51,5 +51,10 @@
     <loc>https://murraycantor.com/ai-supervised-drafting.html</loc>
     <lastmod>2026-11-20</lastmod>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://murraycantor.com/ecosystem/</loc>
+    <lastmod>2026-11-25</lastmod>
+    <priority>0.7</priority>
   </url>
 </urlset>
